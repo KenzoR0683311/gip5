@@ -1,0 +1,49 @@
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Folders
+/webapp/_obj/
+/webapp/_test/
+
+# Compiled Go binary
+/webapp/*.exe
+/webapp/*.exe~
+/webapp/*.dll
+/webapp/*.so
+/webapp/*.dylib
+
+# Log files
+/webapp/*.log
+
+# macOS
+/webapp/.DS_Store
+/webapp/.AppleDouble
+/webapp/.LSOverride
+
+# Thumbnails
+/webapp/._*
+
+# Windows
+/webapp/Thumbs.db
+/webapp/ehthumbs.db
+
+# Compiled Go files
+/webapp/*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+/webapp/*.out
+
+# Dependency directories
+/webapp/vendor/
+/webapp/go.sum
+
+# Environment variable files
+/webapp/.env
+/webapp/.env.local
+/webapp/.env.*.local
+/webapp/.env.production
+/webapp/.env.development
+/webapp/.env.staging
+
