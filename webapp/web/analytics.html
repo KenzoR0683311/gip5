@@ -1,0 +1,46 @@
+<table class="text-white w-full rounded-lg shadow-lg">
+  <tr>
+    <td>ID</td>
+    <td>User</td>
+    <td>VideoID</td>
+    <td>clicked</td>
+    <td>downloaded</td>
+    <td>watch time</td>
+    <td>start time</td>
+    <td>end time</td>
+  </tr>
+  {{ range .Analytics }}
+    <tr class="text-white">
+      <td>{{ .Id }}</td>
+      <td>{{ .UserName }}</td>
+      <td>{{ .VideoId }}</td>
+      <td>{{ .Clicked }}</td>
+      <td>{{ .Downloaded }}</td>
+      <td>{{ .WatchTime }}</td>
+      <td>{{ .StartTime }}</td>
+      <td>{{ .EndTime }}</td>
+    </tr>
+  {{ end }}
+  <tr>
+    <td colspan="8"><hr/></td>
+  </tr>
+  <tr>
+    <td>average clicks: {{ .AvgClicks }}</td>
+  </tr>
+  <tr>
+    <td>total downloadss: {{ .TotalDownloads }}</td>
+  </tr>
+  <tr>
+    <td>average watch time: {{ .AvgWatchTime }}</td>
+  </tr>
+  <tr>
+    <td>
+    {{ if ne .Page 0 }}
+      <p hx-get="/get_video/{{ .Ida }}/{{ Sub .Page 1 }}/{{ .PageSize }}" hx-target="#vid-container">Prev</p>
+    {{ end}}
+    {{ $length := len .Analytics }} {{ if eq $length 10 }}
+      <p hx-get="/get_video/{{ .Ida }}/{{ Add .Page 1 }}/{{ .PageSize }}" hx-target="#vid-container">Next</p>
+    {{ end }}
+    </td>
+  </tr>
+</table>

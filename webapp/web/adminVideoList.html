@@ -1,0 +1,20 @@
+<div>
+  <ul class="divide-y divide-gray-300" id="list" >
+    {{ range .Videos }}
+    {{ block "Video-list-element" .}}
+    <li class="flex items-center py-2">
+      <a hx-get="/get-video/{{ .Id }}" hx-trigger="click" hx-swap="true" hx-target="#vid-container" class="text-white block px-4 py-2 rounded-md flex-grow">{{ .Id }} - {{ .Title }}</a>
+      <button hx-get="/update_video/{{ .Id }}" hx-target="#video-form" class="text-red-600 hover:text-red-900 focus:outline-none px-4 py-2">Edit</button>
+      <button hx-get="/get_video_analytics/{{ .Id }}/0/10" hx-target="#vid-container" class="text-red-600 hover:text-red-900 focus:outline-none px-4 py-2">Analytics</button>
+      <button hx-delete="/remove-video/{{ .Id }}" hx-target="#list" hx-swap="true" class="text-red-600 hover:text-red-900 focus:outline-none px-4 py-2">Delete</button>
+    </li>
+    {{ end }}
+    {{ end }}
+  </ul>
+  {{ if ne .Page 0 }}
+  <p hx-get="/get-videos/{{ Sub .Page 1 }}/{{ .PageSize }}" hx-target="#video-list" hx-swap="true" class="text-white">prev</p>
+  {{ end }}
+  {{ $length := len .Videos}} {{ if eq $length 10 }}
+  <p hx-get="/get-videos/{{ Add .Page 1 }}/{{ .PageSize }}" hx-target="#video-list" hx-swap="true" class="text-white">next</p>
+   {{ end }}
+</div>

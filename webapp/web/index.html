@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script  src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+  <div class="flex justify-center items-center mt-8">
+    <div class="w-3/4" id="vid-container">
+      <video id="vid-player" src='' controls class="w-full rounded-lg shadow-lg">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <form hx-get="/download" hx-swap="none" class="w-1/4 ml-4">
+      <div>
+        <div class="flex justify-between items-center">
+          <h2 class="text-white text-xl font-semibold mb-4">Videos</h2>
+          <div class="flex items-center">
+            <p class="text-white mr-2">Toggle All</p>
+            <input type="checkbox" onClick="toggle(this)" />
+          </div>
+        </div>
+        <div id="video-list">
+          <div>
+          <ul class="divide-y divide-gray-300">
+            {{ range .Videos }}
+            {{ block "Video-list-element" .}}
+            <li class="flex items-center py-2">
+                <a hx-get="/get-video/{{ .Id }}" hx-trigger="click" hx-swap="true" hx-target="#vid-container" class="text-white block px-4 py-2 rounded-md flex-grow">{{ .Id }} - {{ .Title }}</a>
+                <input type="checkbox" class="checkbox" name="checkbox[]" value="{{ .Id }}" class="mr-2 rounded focus:ring-2 focus:ring-blue-500 checked:bg-blue-600 checked:border-transparent">
+            </li>
+            {{ end }}
+            {{ end }}
+          </ul>
+          {{ if ne .Page 0 }}
+          <p hx-get="get-videos/{{ Sub .Page 1 }}/{{ .PageSize }}" hx-target="#video-list" hx-swap="true" class="text-white">prev</p>
+          {{ end }}
+          {{ $length := len .Videos}} {{ if eq $length 10 }}
+          <p hx-get="get-videos/{{ Add .Page 1 }}/{{ .PageSize }}" hx-target="#video-list" hx-swap="true" class="text-white">next</p>
+          {{ end }}
+          </div>
+        </div>
+      </div>
+      <input type="submit" hx-target="#video-list" value="Dowload selected" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md" />
+    </form>
+  </div>
+  <form action="/logout/" method="POST">
+    <input type="submit" class="text-white" name="logout" value="Logout" />
+  </form>
+  <script>
+    function toggle(source) {
+      let checkboxes = document.getElementsByClassName('checkbox');
+        for(let i = 0; i < checkboxes.length; i++) {
+          checkboxes[i].checked = source.checked;
+        }
+    }
+
+    let startTime = 0;
+    let endTime = 0;
+    let longestWatchTime = 0
+
+    function handlePlay(video) {
+      startTime = video.currentTime;
+    }
+
+    function handlePause(video, videoId) {
+      endTime = video.currentTime;
+      setWatchTime(videoId, startTime, endTime);
+    }
+
+    function setWatchTime(videoId, start, end) {
+      if(longestWatchTime < end - start) {
+        longestWatchTime = end - start;
+        fetch('/watch-time-analytics/', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            videoId: videoId,
+            startTime: start,
+            endTime: end,
+            duration: longestWatchTime
+          }) 
+        }).catch(error => {
+          console.error('Fetch error:', error);
+        });
+      }
+      console.log(longestWatchTime);
+    }
+    </script>
+  </body>
+</body>
+</html>
+

@@ -1,0 +1,18 @@
+<div>
+  <ul class="divide-y divide-gray-300">
+  {{ range .Videos }}
+            {{ block "Video-list-element" .}}
+            <li class="flex items-center py-2">
+                <a hx-get="/get-video/{{ .Id }}" hx-trigger="click" hx-swap="true" hx-target="#vid-container" class="text-white block px-4 py-2 rounded-md flex-grow">{{ .Id }} - {{ .Title }}</a>
+                <input type="checkbox" class="checkbox" name="checkbox[]" value="{{ .Id }}" class="mr-2 rounded focus:ring-2 focus:ring-blue-500 checked:bg-blue-600 checked:border-transparent">
+            </li>
+            {{ end }}
+            {{ end }}
+          </ul>
+          {{ if ne .Page 0 }}
+          <p hx-get="/get-videos/{{ Sub .Page 1 }}/{{ .PageSize }}" hx-target="#video-list" hx-swap="true" class="text-white">prev</p>
+          {{ end }}
+          {{ $length := len .Videos }} {{ if eq $length 10 }}
+          <p hx-get="/get-videos/{{ Add .Page 1 }}/{{ .PageSize }}" hx-target="#video-list" hx-swap="true" class="text-white">next</p>
+          {{ end }}
+          </div>
